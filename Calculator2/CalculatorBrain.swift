@@ -10,7 +10,7 @@ import Foundation
 
 struct CalculatorBrain {
     
-    private var accumulaor : Double?    //this is the double that represents what is in the window
+    private var accumulator : Double?    //this is the double that represents what is in the window
     
     private enum Operation {            //all possible types of operation the calc can do
         case constant(Double)       //some buttons' operation is just to type in a mathematical constant
@@ -25,11 +25,36 @@ struct CalculatorBrain {
         "√" : Operation.unaryOperation(sqrt),
         "cos" : Operation.unaryOperation(cos),
         "(-)" : Operation.unaryOperation({ -$0}),
+/*
         "+" : Operation.binaryOperation({$0 + $1}),
         "−" : Operation.binaryOperation({$0 - $1}),
         "×" : Operation.binaryOperation({$0 * $1}),
         "÷" : Operation.binaryOperation({$0 / $1}),
         "=" : Operation.equals
-    ]
+*/
+]
+    mutating func setOperand(_ operand: Double) {
+        accumulator = operand
+    }
     
+    mutating func performOperation(_ symbol : String) {
+        if let operation = operations[symbol] { //if the symbol exists in operations dictionary
+            switch operation {
+            case .constant(let value):
+                accumulator = value
+            case .unaryOperation(let function):
+                if accumulator != nil {
+                    accumulator = function(accumulator!)
+                }
+            default:
+                print("This should never happen")
+            }
+        }
+    }
+    
+    var result : Double? {
+        get {
+            return accumulator
+        }
+    }
 }

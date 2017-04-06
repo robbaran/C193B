@@ -34,7 +34,7 @@ class ViewController: UIViewController {
             display.text = String(newValue)
         }
     }
-/*
+
     private var brain = CalculatorBrain()
     
     @IBAction func performOperation(_ sender: UIButton) {
@@ -49,5 +49,5 @@ class ViewController: UIViewController {
             displayValue = result       //only display if result is set
         }
     }
-*/
+
 }
