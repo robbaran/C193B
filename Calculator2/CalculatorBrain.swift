@@ -25,13 +25,11 @@ struct CalculatorBrain {
         "√" : Operation.unaryOperation(sqrt),
         "cos" : Operation.unaryOperation(cos),
         "(-)" : Operation.unaryOperation({ -$0}),
-/*
         "+" : Operation.binaryOperation({$0 + $1}),
         "−" : Operation.binaryOperation({$0 - $1}),
         "×" : Operation.binaryOperation({$0 * $1}),
         "÷" : Operation.binaryOperation({$0 / $1}),
         "=" : Operation.equals
-*/
 ]
     mutating func setOperand(_ operand: Double) {
         accumulator = operand
@@ -46,9 +44,31 @@ struct CalculatorBrain {
                 if accumulator != nil {
                     accumulator = function(accumulator!)
                 }
-            default:
-                print("This should never happen")
+            case .binaryOperation(let function):
+                if accumulator != nil {
+                    pbo = pendingBinaryOperation(function : function, firstOperand : accumulator!)
+                    accumulator = nil
+                }
+            case .equals:
+                performPendingBinaryOperation()
             }
+        }
+    }
+    
+    private var pbo : pendingBinaryOperation?    //this optional
+    
+    private struct pendingBinaryOperation{
+        let function : (Double, Double) -> Double
+        let firstOperand : Double
+        func perform(with secondOperand : Double) -> Double {
+            return function(firstOperand, secondOperand)
+        }
+    }
+    
+    private mutating func performPendingBinaryOperation() {
+        if pbo != nil && accumulator != nil {
+            accumulator = pbo!.perform(with: accumulator!)
+            pbo = nil   //RJBadd: need to clear firstOperand!
         }
     }
     
