@@ -10,6 +10,8 @@ import Foundation
 
 struct CalculatorBrain {
     
+    var resultIsPending : Bool?
+    
     private var accumulator : Double?    //this is the double that represents what is in the window
     
     private enum Operation {            //all possible types of operation the calc can do
@@ -24,13 +26,15 @@ struct CalculatorBrain {
         "e" : Operation.constant(M_E),
         "√" : Operation.unaryOperation(sqrt),
         "cos" : Operation.unaryOperation(cos),
+        "sin" : Operation.unaryOperation(sin),
         "(-)" : Operation.unaryOperation({ -$0}),
         "+" : Operation.binaryOperation({$0 + $1}),
         "−" : Operation.binaryOperation({$0 - $1}),
         "×" : Operation.binaryOperation({$0 * $1}),
         "÷" : Operation.binaryOperation({$0 / $1}),
-        "=" : Operation.equals
-]
+        "=" : Operation.equals,
+    ]
+    
     mutating func setOperand(_ operand: Double) {
         accumulator = operand
     }
@@ -48,9 +52,11 @@ struct CalculatorBrain {
                 if accumulator != nil {
                     pbo = pendingBinaryOperation(function : function, firstOperand : accumulator!)
                     accumulator = nil
+                    resultIsPending = true
                 }
             case .equals:
                 performPendingBinaryOperation()
+                resultIsPending = false
             }
         }
     }
