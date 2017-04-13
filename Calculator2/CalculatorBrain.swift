@@ -10,7 +10,8 @@ import Foundation
 
 struct CalculatorBrain {
     
-    var resultIsPending : Bool?
+    var resultIsPending : Bool = false
+    var description : String = ""
     
     private var accumulator : Double?    //this is the double that represents what is in the window
     
@@ -37,10 +38,12 @@ struct CalculatorBrain {
     
     mutating func setOperand(_ operand: Double) {
         accumulator = operand
+        description = description + String(operand)
     }
     
     mutating func performOperation(_ symbol : String) {
         if let operation = operations[symbol] { //if the symbol exists in operations dictionary
+            var desc : String = symbol
             switch operation {
             case .constant(let value):
                 accumulator = value
@@ -50,6 +53,7 @@ struct CalculatorBrain {
                 }
             case .binaryOperation(let function):
                 if accumulator != nil {
+                    performPendingBinaryOperation() //performs binary operation allowing the next binary operation to operate on the result of previous operaiton
                     pbo = pendingBinaryOperation(function : function, firstOperand : accumulator!)
                     accumulator = nil
                     resultIsPending = true
@@ -57,7 +61,9 @@ struct CalculatorBrain {
             case .equals:
                 performPendingBinaryOperation()
                 resultIsPending = false
+                desc = ""
             }
+            description = description + desc
         }
     }
     

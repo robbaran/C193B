@@ -12,6 +12,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!
     
+    @IBOutlet weak var sequence: UILabel!
+    
     var userIsInTheMiddleOfTyping = false
     var userHasTypedDecimal = false
     
@@ -60,6 +62,6 @@ class ViewController: UIViewController {
         if let result = brain.result {  //because result may not be set
             displayValue = result       //only display if result is set
         }
+        sequence.text = brain.description
     }
-
 }
